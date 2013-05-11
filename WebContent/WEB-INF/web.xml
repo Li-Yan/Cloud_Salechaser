@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>Salechaser</display-name>
+  <servlet>
+    <servlet-name>Search</servlet-name>
+    <servlet-class>salechaser.SearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Search</servlet-name>
+    <url-pattern>/searchservlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>Choose</servlet-name>
+    <servlet-class>salechaser.ChooseServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Choose</servlet-name>
+    <url-pattern>/chooseservlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ChosenStore</servlet-name>
+    <servlet-class>salechaser.ChosenStoreServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChosenStore</servlet-name>
+    <url-pattern>/chosenstoreservlet</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
