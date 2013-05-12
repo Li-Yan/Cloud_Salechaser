@@ -46,8 +46,6 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var user_location;
 	var user_marker_locker = false;
 	var infowindow = new google.maps.InfoWindow({maxWidth: 800});
-	var current_index = 0;
-	var distance_matrix;
 	
 	function map_initialize() {
 		var mapOptions = {
@@ -60,7 +58,7 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		
 		google.maps.event.addListener(map, 'click', function(event) {
 			if (!user_marker_locker) {
-				user_location = event.latLng;	
+				user_location = event.latLng;
 				
 				if (user_marker != null) user_marker.setMap(null);
 				user_marker = new google.maps.Marker({
@@ -81,6 +79,14 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 					}
 				});
 				map.setCenter(user_location);
+
+				if (storesJson.length > 0) {
+					var xmlhttp = new XMLHttpRequest();
+					xmlhttp.open("GET","routesearchservlet?location=" + user_location 
+							+ "&choose=" + map_choose + "&search=" + map_search, false);
+					xmlhttp.send();
+					alert(xmlhttp.responseText);
+				}
 			}
 		  });
 		

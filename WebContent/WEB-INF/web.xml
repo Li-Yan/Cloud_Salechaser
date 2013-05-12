@@ -28,6 +28,15 @@
     <url-pattern>/chosenstoreservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>RouteSearch</servlet-name>
+    <servlet-class>salechaser.RouteSearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RouteSearch</servlet-name>
+    <url-pattern>/routesearchservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

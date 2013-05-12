@@ -168,4 +168,32 @@ public class SaleStore {
 		}
 		return stores;
 	}
+	
+	public static ArrayList<String> getStoresLocation(String searchWord, String chooseString) {
+		ArrayList<String> locationStrings = new ArrayList<String>();
+		MemoryDB db = new MemoryDB();
+		String query = "SELECT latitude,longitude FROM stores WHERE searchWord='" + searchWord + "'";
+		String ss[] = chooseString.split("");
+		boolean add_AND = false;
+		for (int i = 0; i < ss.length; i++) {
+			if (ss[i].equals("1")) {
+				if (!add_AND) {
+					add_AND = true;
+					query += " AND (";
+				}
+				query += "resultid=" + (i - 1) + " OR ";
+			}
+		}
+		query = query.substring(0, query.length() - 4) + ") ORDER BY resultid;";
+		ResultSet result = db.ExecuteQuery(query);
+		try {
+			while (result.next()) {
+				locationStrings.add(result.getString("latitude") + "," + result.getString("longitude"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return locationStrings;
+	}
 }
