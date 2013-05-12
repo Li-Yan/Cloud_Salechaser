@@ -145,15 +145,15 @@ public class SaleStore {
 		ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
 		MemoryDB db = new MemoryDB();
 		String query = "SELECT * FROM stores WHERE searchWord='" + searchWord + "'";
-		String ss[] = chooseString.split("");
+		chooseString = chooseString.trim();
 		boolean add_AND = false;
-		for (int i = 0; i < ss.length; i++) {
-			if (ss[i].equals("1")) {
+		for (int i = 0; i < chooseString.length(); i++) {
+			if (chooseString.charAt(i) == '1') {
 				if (!add_AND) {
 					add_AND = true;
 					query += " AND (";
 				}
-				query += "resultid=" + (i - 1) + " OR ";
+				query += "resultid=" + (i) + " OR ";
 			}
 		}
 		query = query.substring(0, query.length() - 4) + ") ORDER BY resultid;";
@@ -173,15 +173,15 @@ public class SaleStore {
 		ArrayList<String> locationStrings = new ArrayList<String>();
 		MemoryDB db = new MemoryDB();
 		String query = "SELECT latitude,longitude FROM stores WHERE searchWord='" + searchWord + "'";
-		String ss[] = chooseString.split("");
+		chooseString = chooseString.trim();
 		boolean add_AND = false;
-		for (int i = 0; i < ss.length; i++) {
-			if (ss[i].equals("1")) {
+		for (int i = 0; i < chooseString.length(); i++) {
+			if (chooseString.charAt(i) == '1') {
 				if (!add_AND) {
 					add_AND = true;
 					query += " AND (";
 				}
-				query += "resultid=" + (i - 1) + " OR ";
+				query += "resultid=" + (i) + " OR ";
 			}
 		}
 		query = query.substring(0, query.length() - 4) + ") ORDER BY resultid;";

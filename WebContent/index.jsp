@@ -47,7 +47,14 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var user_marker_locker = false;
 	var infowindow = new google.maps.InfoWindow({maxWidth: 800});
 	
+	//For route
+	var routeJson;
+	var directionsDisplay;
+	var directionsService = new google.maps.DirectionsService();
+
+	
 	function map_initialize() {
+		directionsDisplay = new google.maps.DirectionsRenderer();
 		var mapOptions = {
 			center : location_default,
 			zoom : 12,
@@ -78,36 +85,65 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 						user_marker_locker = false;	
 					}
 				});
-				map.setCenter(user_location);
 
+				//Display the shortest route
 				if (storesJson.length > 0) {
 					var xmlhttp = new XMLHttpRequest();
-					xmlhttp.open("GET","routesearchservlet?location=" + user_location 
-							+ "&choose=" + map_choose + "&search=" + map_search, false);
+					xmlhttp.open("GET", "routesearchservlet?location=" + user_location + "&choose=" + map_choose
+							+ "&search=" + map_search, false);
 					xmlhttp.send();
-					alert(xmlhttp.responseText);
+					routeJson = JSON.parse(xmlhttp.responseText);
+				}
+				if (routeJson.status == "OK") {
+					routeJson = routeJson.route;
+					var waypts = [];
+					for (var i = 0; i < routeJson.length - 1; i++) {
+						var toIndex = routeJson[i].to;
+						waypts.push({
+					          location: new google.maps.LatLng(storesJson[toIndex - 1].latitude, 
+					        		  storesJson[toIndex - 1].longitude),
+					          stopover: true
+					      });
+					}
+					var request = {
+						origin : user_location,
+						destination : user_location,
+						waypoints: waypts,
+					    optimizeWaypoints: true,
+						travelMode : google.maps.DirectionsTravelMode.DRIVING
+					};
+					directionsService.route(request, function(response, status) {
+						if (status == google.maps.DirectionsStatus.OK) {
+							directionsDisplay.setDirections(response);
+						}
+					});
+				}
+				else {
+					alert(routeJson.status);
 				}
 			}
-		  });
-		
-		for (var i = 0; i < storesJson.length; i++) {
+		});
+
+		for ( var i = 0; i < storesJson.length; i++) {
 			addMarker(storesJson[i]);
 		}
+		
+		directionsDisplay.setMap(map);
 	}
-	
+
 	function addMarker(store) {
 		//draw marker
 		var location = new google.maps.LatLng(store.latitude, store.longitude);
 		marker = new google.maps.Marker({
-			position: location,
-			map: map,
+			position : location,
+			map : map,
 			icon : 'images/marker.png',
 			html : marker_htmlMaker(store),
-			draggable: false,
-			animation: google.maps.Animation.DROP
+			draggable : false,
+			animation : google.maps.Animation.DROP
 		});
 		markers.push(marker);
-		
+
 		//set animation
 		google.maps.event.addListener(marker, 'click', function() {
 			for (var i = 0; i < markers.length; i++) {
@@ -118,12 +154,13 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		google.maps.event.addListener(marker, 'dblclick', function() {
 			this.setAnimation(null);
 		});
-		
+
 		//infowindow
 		google.maps.event.addListener(marker, 'click', function() {
 			var index = 0;
 			for (index = 0; index < markers.length; index++) {
-				if (markers[index] == this) break;
+				if (markers[index] == this)
+					break;
 			}
 			infowindow.setContent(this.html);
 			infowindow.open(map, this);
@@ -516,12 +553,14 @@ $(document).ready(function(){
 	});
 	$("#choose_button").mousedown(function() {
 		var checked = false;
+		var checkedCount = 0;
 		var checkedString = "";
 		for (var i = 0; i < result_number; i++) {
 			if (document.getElementById("result_checkbox" + i) != null) {
 				checkbox = document.getElementById("result_checkbox" + i);
 				if (checkbox.checked) {
 					checkedString = checkedString + "1";
+					checkedCount++;
 					checked = true;
 				}
 				else {
@@ -534,6 +573,11 @@ $(document).ready(function(){
 		}
 		if (!checked) {
 			alert("Error: no store checked!");
+			document.getElementById("choose_parameter").value = "show=1&search=<%=search %>";
+		}
+		else if (checkedCount > 6) {
+			alert("Error: this is free Google Map API v3, which supports at most 8 " 
+					+ "waypoints(include start and end). So you can choose at most 6 stores)!");
 			document.getElementById("choose_parameter").value = "show=1&search=<%=search %>";
 		}
 		else {

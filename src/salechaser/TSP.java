@@ -5,25 +5,23 @@ import java.util.HashSet;
 
 public class TSP {
 	private long[][] matrix;
-	private int matrixSize;
 	
 	public TSP(long[][] M) {
-		matrixSize = M.length;
 		matrix = M.clone();
 	}
 	
-	public ArrayList<Integer> DynamicProgramming_TSP() {
+	public ArrayList<Integer> DynamicProgramming() {
 		ArrayList<Integer> routeList = new ArrayList<Integer>();
 		HashSet<Integer> nodeSet = new HashSet<Integer>();
-		for (int i = 1; i < matrixSize; i++) {
+		for (int i = 1; i < matrix.length; i++) {
 			nodeSet.add(i);
 		}
-		DynamicProgramming_TSP_sub(0, nodeSet, routeList);
+		DynamicProgramming_sub(0, nodeSet, routeList);
 		return routeList;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private long DynamicProgramming_TSP_sub(int start, HashSet<Integer> nodeSet, ArrayList<Integer> routeList) {
+	private long DynamicProgramming_sub(int start, HashSet<Integer> nodeSet, ArrayList<Integer> routeList) {
 		if (nodeSet.isEmpty()) {
 			routeList.clear();
 			routeList.add(0, start);
@@ -35,7 +33,7 @@ public class TSP {
 			HashSet<Integer> sub_nodeSet = (HashSet<Integer>) nodeSet.clone();
 			sub_nodeSet.remove(node);
 			ArrayList<Integer> sub_routeList = new ArrayList<Integer>();
-			long weight = DynamicProgramming_TSP_sub(node, sub_nodeSet, sub_routeList);
+			long weight = DynamicProgramming_sub(node, sub_nodeSet, sub_routeList);
 			if (min > matrix[start][node] + weight) {
 				routeList.clear();
 				for (int i = 0; i < sub_routeList.size(); i++) {

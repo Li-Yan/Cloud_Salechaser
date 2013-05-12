@@ -37,7 +37,8 @@ public class RouteSearchServlet extends HttpServlet  {
 		String response = "";
 		String line;
 		try {
-			String urlString = api_google_distance_matrix + originsString + destinationsString + "&sensor=false";
+			String urlString = api_google_distance_matrix + originsString + destinationsString 
+					+ "&language=en-EN&sensor=false";
 			URL url = new URL(urlString);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
@@ -60,6 +61,7 @@ public class RouteSearchServlet extends HttpServlet  {
 			throws IOException, ServletException {
 		
 		PrintWriter out=response.getWriter();
+		JSONObject retureObject = new JSONObject();
 		String locationWord = request.getParameter("location");
 		String searchWord = request.getParameter("search");
 		String chooseWord = request.getParameter("choose");
@@ -84,6 +86,12 @@ public class RouteSearchServlet extends HttpServlet  {
 		
 		//Parse JSON
 		JSONObject mainObject = new JSONObject(distanceJSON);
+		retureObject.put("status", mainObject.getString("status"));
+		if (!mainObject.getString("status").equalsIgnoreCase("OK")) {
+			out.write(retureObject.toString());
+			out.close();
+			return;
+		}
 		JSONArray matrixArray = mainObject.getJSONArray("rows");
 		for (int i = 0; i < matrixArray.length(); i++) {
 			JSONArray rowArray = matrixArray.getJSONObject(i).getJSONArray("elements");
@@ -97,11 +105,24 @@ public class RouteSearchServlet extends HttpServlet  {
 		
 		//Calculate the best route
 		TSP tsp = new TSP(durationMatrix);
-		ArrayList<Integer> routeList = tsp.DynamicProgramming_TSP();
-		System.out.println(routeList.toString());
+		ArrayList<Integer> routeList = tsp.DynamicProgramming();
+		routeList.add(0);
 		
-		
-		out.write(matrixArray.length());
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < routeList.size() - 1; i++) {
+			JSONObject jsonObject = new JSONObject();
+			int fromIndex = routeList.get(i);
+			int toIndex = routeList.get(i + 1);
+			jsonObject.put("from", fromIndex);
+			jsonObject.put("to", toIndex);
+			jsonObject.put("distanceText", distanceMatrix[fromIndex][toIndex].distanceText);
+			jsonObject.put("distanceValue", distanceMatrix[fromIndex][toIndex].distanceValue);
+			jsonObject.put("durationText", distanceMatrix[fromIndex][toIndex].durationText);
+			jsonObject.put("durationValue", distanceMatrix[fromIndex][toIndex].durationValue);
+			jsonArray.put(jsonObject);
+		}
+		retureObject.put("route", jsonArray);
+		out.write(retureObject.toString());
 		out.close();
 	}
 }
