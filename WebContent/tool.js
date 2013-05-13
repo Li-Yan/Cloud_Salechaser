@@ -40,6 +40,5 @@ function marker_htmlMaker(store) {
 	htmlString = htmlString + "<a class='normal_font'>Phone</a><br />";
 	htmlString = htmlString + "<a class='result_title_font'>" + unescape(store.phone) + "</a><br />";
 	htmlString = htmlString + "</div>";
-	
 	return htmlString;
 }

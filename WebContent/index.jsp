@@ -64,6 +64,8 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 				mapOptions);
 		
 		google.maps.event.addListener(map, 'click', function(event) {
+			alert(uid);
+			
 			if (!user_marker_locker) {
 				user_location = event.latLng;
 				
@@ -199,13 +201,18 @@ body {
 	top: 0px;
 	right: auto;
 }
+.page_button {
+	position: absolute;
+	top: 20px;
+	left: 300px;
+}
 .map {
 	position: absolute;
 	height: 500px;
 	width: 97%;
 	right: 1.5%;
 	z-index: -1;
-	top: 100px;
+	top: 105px;
 }
 .title_label {
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -254,17 +261,79 @@ body {
 
 <body>
 
-<img src="images/logo.png" alt="logo" width="245" height="88" class="logo" /> 
+<!-- Facebook -->
+<div id="fb-root"></div>
+<script>
+	var uid;
+	var accessToken;
+	window.fbAsyncInit = function() {
+		// init the FB JS SDK
+	    FB.init({
+	      appId		: '574480679251880',
+	      status	: true,
+	      xfbml		: true,
+	      oauth		: true
+	    });
+	    
+	    FB.getLoginStatus(function (response) {
+	  	    if (response.status === 'connected') {
+	  	        uid = response.authResponse.userID;
+	  	        accessToken = response.authResponse.accessToken;
+	  	    } else if (response.status === 'not_authorized') {
+	  	    	FB.login();
+	  	    } else {
+	  	    }
+	  	});
+	    
+	    FB.Event.subscribe('auth.authResponseChange', function(response) { 
+	        if (response.status === 'connected') {
+	        	uid = response.authResponse.userID;
+	  	        accessToken = response.authResponse.accessToken;
+	        } else if (response.status === 'not_authorized') {
+	  	    	FB.login();
+	  	    } else {
+	  	    }
+	    });
+	};
+
+	// Load the SDK asynchronously
+	(function(d){
+		var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+		if (d.getElementById(id)) {return;}
+		js = d.createElement('script');
+		js.id = id;
+		js.async = true;
+		js.src = "//connect.facebook.net/en_US/all.js";
+		ref.parentNode.insertBefore(js, ref);
+	}(document));
+
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) {
+			return;
+		}
+		js = d.createElement(s);
+		js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+</script>
+<!-- End Facebook -->
+
+<img src="images/logo.png" alt="logo" width="278" height="100" class="logo" /> 
 <div align="right">
-<img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
+<div class="fb-login-button" data-show-faces="true" data-width="10" data-max-rows="5" size="medium"></div>
+</div>
 <!-- Buttons for multiple jobs -->
-<img id="login_image" src="images/login.png" width="30" height="30" alt="login icon" />
-<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<div class="page_button">
+<!-- <img id="login_image" src="images/login.png" width="30" height="30" alt="login icon" /> -->
+<!-- <img src="images/transparent.png" width="15" height="10" alt="transparent" /> -->
 <img id="search_image" src="images/search.png" width="30" height="30" alt="search icon" />
 <img src="images/transparent.png" width="15" height="10" alt="transparent" />
 <img id="result_image" src="images/result.png" width="30" height="30" alt="result icon" />
-<!-- End: Buttons for multiple jobs -->
+<img src="images/transparent.png" width="15" height="10" alt="transparent" />
 </div>
+<!-- End: Buttons for multiple jobs -->
 <br />
 
 <script language="javascript">
@@ -370,6 +439,7 @@ var result_active = 0;
 <input id="choose_parameter" name="choose_parameter" type="hidden" />
 <script language="javascript">
 var result_number = 0;
+var sale_link = [];
 </script>
 <% String search = "";
 if (request.getParameter("search") != null) {
@@ -381,13 +451,15 @@ if (request.getParameter("search") != null) {
 %>
 			<script language="javascript">
 				document.write("<div class='result_checkbox'>");
-				document.write("<input id='result_checkbox" + "<%=m %>" + "' type='checkbox' name='" + "<%=m %>" + "'>");
+				document.write("<div class='fb-like' data-href='" + "<%=saleStore.URL %>" + "' data-layout='button_count' data-show-faces='false'></div>");
+				document.write("<input id='result_checkbox" + "<%=m %>" + "' type='checkbox' name='" + "<%=m %>" + "' onclick='setLike(this.name)'>");
 				document.write("<img src='" + "<%=saleStore.showImage %>" + "' width='27' height='27' />");
 				document.write("<font class='normal_font'>&nbsp;" + unescape("<%=saleStore.name %>") + ": </font>");
-				document.write("<a class='result_title_font' href='#' onClick=\"window.open(\'" + "<%=saleStore.URL %>" + "\')\">" + unescape("<%=saleStore.dealTitle %>") + "</a><br />");
+				document.write("<a class='result_title_font' href='#' onClick=\"window.open(\'" + "<%=saleStore.URL %>" + "\')\">" + unescape("<%=saleStore.dealTitle %>") + "</a>");
 				document.write("</input>");
 				document.write("</div><br />");
 				document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
+				sale_link.push("<%=saleStore.URL %>");
 				result_number++;
 			</script>
 <%	
@@ -520,7 +592,17 @@ $(document).ready(function(){
 	
 	//Button click
 	$("#login_button").mousedown(function() {
-		alert("Code for login is coming!");
+		FB.getLoginStatus(function (response) {
+			alert("sfaf");
+		    if (response.status === 'connected') {  // 程式有連結到 Facebook 帳號
+		        var uid = response.authResponse.userID; // 取得 UID
+		        var accessToken = response.authResponse.accessToken; // 取得 accessToken
+		        alert(uid);
+		    } else if (response.status === 'not_authorized') {
+		        alert("請允許授權！");
+		    } else {
+		    }
+		});
 	});
 	$("#register_button").mousedown(function() {
 		alert("Code for register is coming!");
