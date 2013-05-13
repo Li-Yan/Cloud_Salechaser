@@ -1,0 +1,12 @@
+Each facebook Web app only supports one domain, so do the following:
+	- Check you facebook web app and get the app id.
+	- In "index.jsp", search this lines:
+		window.fbAsyncInit = function() {
+		// init the FB JS SDK
+	    FB.init({
+	      appId		: '******',
+	      status	: true,
+	      xfbml		: true,
+	      oauth		: true
+	    });
+	- Input your app id here.

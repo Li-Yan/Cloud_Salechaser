@@ -266,6 +266,8 @@ body {
 <script>
 	var uid;
 	var accessToken;
+	var name;
+	var userJson;
 	window.fbAsyncInit = function() {
 		// init the FB JS SDK
 	    FB.init({
@@ -279,6 +281,10 @@ body {
 	  	    if (response.status === 'connected') {
 	  	        uid = response.authResponse.userID;
 	  	        accessToken = response.authResponse.accessToken;
+	  	      	var xmlhttp = new XMLHttpRequest();
+	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
+	  			xmlhttp.send();
+	  			userJson = JSON.parse(xmlhttp.responseText);
 	  	    } else if (response.status === 'not_authorized') {
 	  	    	FB.login();
 	  	    } else {
@@ -289,6 +295,10 @@ body {
 	        if (response.status === 'connected') {
 	        	uid = response.authResponse.userID;
 	  	        accessToken = response.authResponse.accessToken;
+	  	      	var xmlhttp = new XMLHttpRequest();
+	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
+	  			xmlhttp.send();
+	  			userJson = JSON.parse(xmlhttp.responseText);
 	        } else if (response.status === 'not_authorized') {
 	  	    	FB.login();
 	  	    } else {
@@ -519,7 +529,7 @@ $(document).ready(function(){
 	});
 	$("#login_image").mouseup(function() {
 		if (login_active) {
-			document.getElementById("login_image").src = "images/login.png";
+			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			login_active = 0;
@@ -527,7 +537,7 @@ $(document).ready(function(){
 			result_active = 0;
 		}
 		else {
-			document.getElementById("login_image").src = "images/login_active.png";
+			//document.getElementById("login_image").src = "images/login_active.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			login_active = 1;
@@ -546,7 +556,7 @@ $(document).ready(function(){
 	});
 	$("#search_image").mouseup(function() {
 		if (search_active) {
-			document.getElementById("login_image").src = "images/login.png";
+			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			login_active = 0;
@@ -554,7 +564,7 @@ $(document).ready(function(){
 			result_active = 0;
 		}
 		else {
-			document.getElementById("login_image").src = "images/login.png";
+			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search_active.png";
 			document.getElementById("result_image").src = "images/result.png";
 			login_active = 0;
@@ -573,7 +583,7 @@ $(document).ready(function(){
 	});
 	$("#result_image").mouseup(function() {
 		if (result_active) {
-			document.getElementById("login_image").src = "images/login.png";
+			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			login_active = 0;
@@ -581,7 +591,7 @@ $(document).ready(function(){
 			result_active = 0;
 		}
 		else {
-			document.getElementById("login_image").src = "images/login.png";
+			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result_active.png";
 			login_active = 0;

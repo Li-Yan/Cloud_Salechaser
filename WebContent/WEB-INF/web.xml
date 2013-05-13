@@ -37,6 +37,15 @@
     <url-pattern>/routesearchservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>CheckUserServlet</servlet-name>
+    <servlet-class>salechaser.CheckUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CheckUserServlet</servlet-name>
+    <url-pattern>/checkuserservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

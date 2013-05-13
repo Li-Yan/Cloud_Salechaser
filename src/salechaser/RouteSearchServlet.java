@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class RouteSearchServlet extends HttpServlet  {
 
 	private static final long serialVersionUID = 6225911314483416295L;
-	private static final String api_google_distance_matrix = "http://maps.googleapis.com/maps/api/distancematrix/json?";
+	private static final String url_google_distance_matrix = "http://maps.googleapis.com/maps/api/distancematrix/json?";
 	
 	private String GetDistances(double[] latitudes, double[] longitudes) {
 		String originsString = "origins=";
@@ -37,7 +37,7 @@ public class RouteSearchServlet extends HttpServlet  {
 		String response = "";
 		String line;
 		try {
-			String urlString = api_google_distance_matrix + originsString + destinationsString 
+			String urlString = url_google_distance_matrix + originsString + destinationsString 
 					+ "&language=en-EN&sensor=false";
 			URL url = new URL(urlString);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();

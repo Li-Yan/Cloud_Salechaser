@@ -69,6 +69,7 @@ public class SaleStore {
 		if ((s = object.getString("postDate")) != null) this.postDate = s;
 		if ((s = object.getString("expirationDate")) != null) this.expirationDate = s;
 		if ((s = object.getString("dealTitle")) != null) this.dealTitle = s.replaceAll("\\'", "\\\\'");
+		if (this.dealTitle.length() > 70) this.dealTitle = this.dealTitle.substring(0, 70);
 		if ((s = object.getString("dealinfo")) != null) this.dealinfo = s.replaceAll("\\'", "\\\\'");
 		if ((s = object.getString("URL")) != null) this.URL = s;
 		if ((s = object.getString("lat")) != null) this.latitude = Double.parseDouble(s);

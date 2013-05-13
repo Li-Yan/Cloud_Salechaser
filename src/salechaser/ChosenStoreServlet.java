@@ -19,7 +19,6 @@ public class ChosenStoreServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException, ServletException {
 		
-		PrintWriter out=response.getWriter();
 		String searchWord = request.getParameter("search");
 		String chooseWord = request.getParameter("choose");
 		
@@ -38,6 +37,7 @@ public class ChosenStoreServlet extends HttpServlet {
 			jsonObject.put("longitude", saleStore.longitude);
 			jsonArray.put(jsonObject);
 		}
+		PrintWriter out=response.getWriter();
 		out.write(jsonArray.toString());
 		out.close();
 	}

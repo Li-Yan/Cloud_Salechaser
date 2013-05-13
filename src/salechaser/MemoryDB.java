@@ -49,6 +49,10 @@ public class MemoryDB {
 				+ "expirationDate VARCHAR(64), dealTitle VARCHAR(1024), dealinfo VARCHAR(1024), "
 				+ "URL VARCHAR(1024), latitude double, longitude double, date INTEGER, searchWord VARCHAR(1024));");
 		}
+		if (tableName.equalsIgnoreCase("users")) {
+			Execute("DROP TABLE IF EXISTS users;");
+			Execute("CREATE TABLE users (id VARCHAR(32) PRIMARY KEY, name VARCHAR(64), picture VARCHAR(1024))");
+		}
 	}
 	
 	public ResultSet ExecuteQuery(String Query) {
