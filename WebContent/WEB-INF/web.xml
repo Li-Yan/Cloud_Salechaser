@@ -46,6 +46,24 @@
     <url-pattern>/checkuserservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>SearchAddressServlet</servlet-name>
+    <servlet-class>salechaser.SearchAddressServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchAddressServlet</servlet-name>
+    <url-pattern>/searchaddressservlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ShareServlet</servlet-name>
+    <servlet-class>salechaser.ShareServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ShareServlet</servlet-name>
+    <url-pattern>/shareservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

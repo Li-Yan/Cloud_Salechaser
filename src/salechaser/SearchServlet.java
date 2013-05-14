@@ -1,11 +1,6 @@
 package salechaser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,25 +32,7 @@ public class SearchServlet extends HttpServlet {
 			urlString = urlString + "&" + entry.getKey() + "=" + entry.getValue();
 		}
 		
-		String response = "";
-		String line;
-		try {
-			URL url = new URL(urlString);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	         while ((line = rd.readLine()) != null) {
-	            response = response + line;
-	         }
-	         rd.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return response;
+		return JavaHttpManager.JavaHttpGet(urlString);
 	}
 	
 	private ArrayList<SaleStore> parseResult(String jsonString) {

@@ -1,12 +1,7 @@
 package salechaser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -34,27 +29,9 @@ public class RouteSearchServlet extends HttpServlet  {
 			destinationsString += latitudes[i] + "," + longitudes[i];
 		}
 		
-		String response = "";
-		String line;
-		try {
-			String urlString = url_google_distance_matrix + originsString + destinationsString 
-					+ "&language=en-EN&sensor=false";
-			URL url = new URL(urlString);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-			BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	         while ((line = rd.readLine()) != null) {
-	            response = response + line;
-	         }
-	         rd.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return response;
+		String urlString = url_google_distance_matrix + originsString + destinationsString 
+				+ "&language=en-EN&sensor=false";
+		return JavaHttpManager.JavaHttpGet(urlString);
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 

@@ -49,9 +49,15 @@ public class MemoryDB {
 				+ "expirationDate VARCHAR(64), dealTitle VARCHAR(1024), dealinfo VARCHAR(1024), "
 				+ "URL VARCHAR(1024), latitude double, longitude double, date INTEGER, searchWord VARCHAR(1024));");
 		}
-		if (tableName.equalsIgnoreCase("users")) {
+		else if (tableName.equalsIgnoreCase("users")) {
 			Execute("DROP TABLE IF EXISTS users;");
 			Execute("CREATE TABLE users (id VARCHAR(32) PRIMARY KEY, name VARCHAR(64), picture VARCHAR(1024))");
+		}
+		else if (tableName.equalsIgnoreCase("share")) {
+			Execute("DROP TABLE IF EXISTS share;");
+			Execute("CREATE TABLE share (userID VARCHAR(32), shareID VARCHAR(32) PRIMARY KEY, " 
+				+ "item VARCHAR(64), price VARCHAR(32), address VARCHAR(1024), comment VARCHAR(1024), " 
+				+ "picture VARCHAR(256), date VARCHAR(32), latitude double, longitude double)");
 		}
 	}
 	

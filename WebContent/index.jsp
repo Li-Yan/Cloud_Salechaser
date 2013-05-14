@@ -19,6 +19,16 @@ storeJSON is a JSON Array, use storeJSON.length to get its length
 each storeJSON[i] has the following attributes:
 	name;address;phone;showImage;expirationDate;dealTitle;URL;latitude;longitude
 -->
+<% if (request.getParameter("share") != null) {
+	String shareString = request.getParameter("share");
+%>
+	<script type="text/javascript">
+		alert("<%=shareString %>");
+		window.location = "index.jsp";
+	</script>
+<%
+}
+%>
 <% if (request.getParameter("choose") != null) {
 	String map_choose = request.getParameter("choose");
 	String map_search = request.getParameter("search");
@@ -64,7 +74,6 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 				mapOptions);
 		
 		google.maps.event.addListener(map, 'click', function(event) {
-			alert(uid);
 			
 			if (!user_marker_locker) {
 				user_location = event.latLng;
@@ -264,9 +273,9 @@ body {
 <!-- Facebook -->
 <div id="fb-root"></div>
 <script>
-	var uid;
-	var accessToken;
-	var name;
+	var uid = "";
+	var accessToken = "";
+	var name = "";
 	var userJson;
 	window.fbAsyncInit = function() {
 		// init the FB JS SDK
@@ -285,6 +294,7 @@ body {
 	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
 	  			xmlhttp.send();
 	  			userJson = JSON.parse(xmlhttp.responseText);
+	  			name = userJson.name;
 	  	    } else if (response.status === 'not_authorized') {
 	  	    	FB.login();
 	  	    } else {
@@ -299,6 +309,7 @@ body {
 	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
 	  			xmlhttp.send();
 	  			userJson = JSON.parse(xmlhttp.responseText);
+	  			name = userJson.name;
 	        } else if (response.status === 'not_authorized') {
 	  	    	FB.login();
 	  	    } else {
@@ -342,6 +353,7 @@ body {
 <img src="images/transparent.png" width="15" height="10" alt="transparent" />
 <img id="result_image" src="images/result.png" width="30" height="30" alt="result icon" />
 <img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img id="share_image" src="images/share.png" width="30" height="30" alt="share icon" />
 </div>
 <!-- End: Buttons for multiple jobs -->
 <br />
@@ -350,6 +362,8 @@ body {
 var login_active = 0;
 var search_active = 0;
 var result_active = 0;
+var share_active = 0;
+var addressJson;
 </script>
 <!-- subpage for login -->
 <div id="subpage_login" align="center" class="non_display_subpage">
@@ -449,7 +463,6 @@ var result_active = 0;
 <input id="choose_parameter" name="choose_parameter" type="hidden" />
 <script language="javascript">
 var result_number = 0;
-var sale_link = [];
 </script>
 <% String search = "";
 if (request.getParameter("search") != null) {
@@ -469,7 +482,6 @@ if (request.getParameter("search") != null) {
 				document.write("</input>");
 				document.write("</div><br />");
 				document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
-				sale_link.push("<%=saleStore.URL %>");
 				result_number++;
 			</script>
 <%	
@@ -487,6 +499,60 @@ if (request.getParameter("search") != null) {
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
 <!-- End: subpage for result -->
+
+<!-- subpage for share -->
+<div id="subpage_share" align="center" class="non_display_subpage">
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
+<label class="title_label">Share</label> <br />
+
+<form id="share_form" enctype="multipart/form-data">
+
+<img src="images/user.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">User:</font>
+<img src="images/transparent.png" width="40" height="10" alt="transperant" />
+<input id="share_user_textField" name="share_user_textField" class="input_font" type="text" size="33" disabled /><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/item.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Item:</font>
+<img src="images/transparent.png" width="40" height="10" alt="transperant" />
+<input id="share_item_textField" name="share_item_textField" class="input_font" type="text" size="33" value="" onclick="this.select();"/><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/price.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Price:</font>
+<img src="images/transparent.png" width="36" height="10" alt="transperant" />
+<input id="share_price_textField" name="share_price_textField" class="input_font" type="text" size="33" value="" onclick="this.select();"/><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/location.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Address:</font>
+<img src="images/transparent.png" width="20" height="10" alt="transperant" />
+<input id="share_address_textField" name="share_address_textField" class="input_font" type="text" size="29" value="" onclick="this.select();"/>&nbsp;&nbsp;
+<img id="share_refresh_image" src="images/refresh.png" width="15" height="15" alt="user" /><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/comment.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Comment:</font>
+<img src="images/transparent.png" width="5" height="10" alt="transperant" />
+<textarea id="share_comment_textArea" name="share_comment_textArea" class="input_font" rows="4" cols="31" style="vertical-align:top" ></textarea><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/picture.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Picture:</font>
+<img src="images/transparent.png" width="19" height="10" alt="transperant" />
+<input id="share_picture_file" name="share_picture_file" type="file" class="input_font" size="11" accept="image/*" /><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<input id="share_parameter" name="share_parameter" type="hidden" />
+
+<button id="share_button" class="normal_button" >Share</button><br />
+</form>
+
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
+</div>
+<!-- End: subpage for share -->
 
 <!-- map operation -->
 <div id="map_canvas" class="map" align="center" />
@@ -512,6 +578,14 @@ $("#result_image").wTooltip({
 	title: "Result",
 	theme: "black"
 });
+$("#share_image").wTooltip({
+	title: "Share",
+	theme: "black"
+});
+$("#share_refresh_image").wTooltip({
+	title: "Refresh address",
+	theme: "yellow"
+});
 </script>
 <!-- End: Mouse over notification -->
 
@@ -523,6 +597,7 @@ $(document).ready(function(){
 		$("#subpage_login").fadeToggle("slow");
 		$("#subpage_search").hide();
 		$("#subpage_result").hide();
+		$("#subpage_share").hide();
 	});
 	$("#login_image").mousedown(function() {
 		document.getElementById("login_image").src = "images/login_down.png";
@@ -532,17 +607,21 @@ $(document).ready(function(){
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
+			share_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login_active.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 1;
 			search_active = 0;
 			result_active = 0;
+			share_active = 0;
 		}
 	});
 	//search_image
@@ -550,6 +629,7 @@ $(document).ready(function(){
 		$("#subpage_login").hide();
 		$("#subpage_search").fadeToggle("slow");
 		$("#subpage_result").hide();
+		$("#subpage_share").hide();
 	});
 	$("#search_image").mousedown(function() {
 		document.getElementById("search_image").src = "images/search_down.png";
@@ -559,17 +639,21 @@ $(document).ready(function(){
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
+			share_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search_active.png";
 			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 0;
 			search_active = 1;
 			result_active = 0;
+			share_active = 0;
 		}
 	});
 	//result_image
@@ -577,6 +661,7 @@ $(document).ready(function(){
 		$("#subpage_login").hide();
 		$("#subpage_search").hide();
 		$("#subpage_result").fadeToggle("slow");
+		$("#subpage_share").hide();
 	});
 	$("#result_image").mousedown(function() {
 		document.getElementById("result_image").src = "images/result_down.png";
@@ -586,33 +671,82 @@ $(document).ready(function(){
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
+			share_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result_active.png";
+			document.getElementById("share_image").src = "images/share.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 1;
+			share_active = 0;
 		}
+	});
+	//share_image
+	$("#share_image").click(function() {
+		$("#subpage_login").hide();
+		$("#subpage_search").hide();
+		$("#subpage_result").hide();
+		$("#subpage_share").fadeToggle("slow");
+	});
+	$("#share_image").mousedown(function() {
+		document.getElementById("share_image").src = "images/share_down.png";
+	});
+	$("#share_image").mouseup(function() {
+		if (share_active) {
+			//document.getElementById("login_image").src = "images/login.png";
+			document.getElementById("search_image").src = "images/search.png";
+			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
+			login_active = 0;
+			search_active = 0;
+			result_active = 0;
+			share_active = 0;
+		}
+		else {
+			//document.getElementById("login_image").src = "images/login.png";
+			document.getElementById("search_image").src = "images/search.png";
+			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share_active.png";
+			document.getElementById("share_user_textField").value = name;
+			login_active = 0;
+			search_active = 0;
+			result_active = 0;
+			share_active = 1;
+		}
+	});
+	
+	//Image click
+	$("#share_refresh_image").click(function() {
+		var address_text = document.getElementById("share_address_textField").value;
+		if ((address_text == null) || (address_text == "")) {
+			alert("Error: Please input the address");
+		}
+		else {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET","searchaddressservlet?address=" + address_text, false);
+			xmlhttp.send();
+			addressJson = JSON.parse(xmlhttp.responseText);
+			alert("Do mean: " + addressJson.formatted_address + "?\nIf not, please search again.");
+			document.getElementById("share_address_textField").value = addressJson.formatted_address;
+		}
+	});
+	$("#share_refresh_image").mousedown(function() {
+		document.getElementById("share_refresh_image").src = "images/refresh_down.png";
+	});
+	$("#share_refresh_image").mouseup(function() {
+		document.getElementById("share_refresh_image").src = "images/refresh.png";
 	});
 	
 	//Button click
 	$("#login_button").mousedown(function() {
-		FB.getLoginStatus(function (response) {
-			alert("sfaf");
-		    if (response.status === 'connected') {  // 程式有連結到 Facebook 帳號
-		        var uid = response.authResponse.userID; // 取得 UID
-		        var accessToken = response.authResponse.accessToken; // 取得 accessToken
-		        alert(uid);
-		    } else if (response.status === 'not_authorized') {
-		        alert("請允許授權！");
-		    } else {
-		    }
-		});
+		alert("Code for login is coming!");
 	});
 	$("#register_button").mousedown(function() {
 		alert("Code for register is coming!");
@@ -678,6 +812,47 @@ $(document).ready(function(){
 		}
 		form = document.getElementById("result_form");
 		form.action = "chooseservlet";
+		form.method = "post";
+		form.submit();
+	});
+	$("#share_button").mousedown(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		
+		var item = document.getElementById("share_item_textField").value;
+		var price = document.getElementById("share_price_textField").value;
+		var address = document.getElementById("share_address_textField").value;
+		if (item == "") {
+			alert("Error: Please input item!");
+			return;
+		}
+		if (price == "") {
+			alert("Error: Please input price!");
+			return;
+		}
+		
+		if (!valid_sharePrice(price)) {
+			alert("Please input the price in USD(e.g. $100).");
+			return;
+		}
+		if (address == "") {
+			alert("Error: Please input address!");
+			return;
+		}
+		
+		//Finished Check
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","searchaddressservlet?address=" + address, false);
+		xmlhttp.send();
+		addressJson = JSON.parse(xmlhttp.responseText);
+		document.getElementById("share_address_textField").value = addressJson.formatted_address;
+		document.getElementById("share_parameter").value = uid + "," + addressJson.latitude + "," + addressJson.longitude;
+		
+		//Form submit
+ 		form = document.getElementById("share_form");
+		form.action = "shareservlet";
 		form.method = "post";
 		form.submit();
 	});

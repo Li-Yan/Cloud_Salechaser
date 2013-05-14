@@ -25,6 +25,24 @@ function valid_mileRadius(MileRadius) {
 	return true;
 }
 
+function valid_sharePrice(Price) {
+	var s = "" + Price;
+	length = s.length;
+	if (length < 2) {
+		return false;
+	}
+	else if (s.charAt(0) != '$') {
+		return false;
+	}
+	for (var i = 1; i < length; i++) {
+		var ch = s.charAt(i);
+		if ((ch < '0') || (ch >'9')) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function marker_htmlMaker(store) {
 	var htmlString = "";
 	htmlString = htmlString + "<div align='left' class='info'>";
