@@ -354,6 +354,8 @@ body {
 <img id="result_image" src="images/result.png" width="30" height="30" alt="result icon" />
 <img src="images/transparent.png" width="15" height="10" alt="transparent" />
 <img id="share_image" src="images/share.png" width="30" height="30" alt="share icon" />
+<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img id="follow_image" src="images/follow.png" width="30" height="30" alt="share icon" />
 </div>
 <!-- End: Buttons for multiple jobs -->
 <br />
@@ -363,6 +365,7 @@ var login_active = 0;
 var search_active = 0;
 var result_active = 0;
 var share_active = 0;
+var follow_active = 0;
 var addressJson;
 </script>
 <!-- subpage for login -->
@@ -556,8 +559,6 @@ if (request.getParameter("search") != null) {
 
 <input id="share_parameter" name="share_parameter" type="hidden" />
 
-
-
 <script type="text/javascript">
 function change_tweet() {
 	var tweet_string = "I want to share:\n";
@@ -603,10 +604,36 @@ function change_tweet() {
 </div>
 <!-- End: subpage for share -->
 
+<!-- subpage for follow -->
+<div id="subpage_follow" align="center" class="non_display_subpage">
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
+<label class="title_label">Follow</label><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<font class="normal_font">Search User:</font>
+<img src="images/transparent.png" width="5" height="10" alt="transperant" />
+<input id="follow_search_textField" name="follow_search_textField" class="input_font" type="text" size="29" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
+<img id="user_search_image" src="images/user_search.png" width="15" height="15" alt="user" /><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<font class="normal_font">Follow List</font><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<select id="follow_select" name="follow_select" size="7" multiple="multiple" class="input_font" style="width:370px">
+</select><br />
+<img src="images/transparent.png" width="19" height="10" alt="transperant" /><br />
+
+<button id="follow_list_button" class="normal_button" >List My Follows</button><br />
+<img src="images/transparent.png" width="5" height="10" alt="transperant" />
+
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
+</div>
+<!-- End: subpage for follow -->
+
 <!-- map operation -->
 <div id="map_canvas" class="map" align="center" />
 <!-- End: map operation -->
-
 
 <!-- Mouse over notification -->
 <script type="text/javascript">
@@ -631,8 +658,16 @@ $("#share_image").wTooltip({
 	title: "Share",
 	theme: "black"
 });
+$("#follow_image").wTooltip({
+	title: "Follow",
+	theme: "black"
+});
 $("#share_refresh_image").wTooltip({
 	title: "Refresh address",
+	theme: "yellow"
+});
+$("#user_search_image").wTooltip({
+	title: "Search User",
 	theme: "yellow"
 });
 </script>
@@ -647,6 +682,7 @@ $(document).ready(function(){
 		$("#subpage_search").hide();
 		$("#subpage_result").hide();
 		$("#subpage_share").hide();
+		$("#subpage_follow").hide();
 	});
 	$("#login_image").mousedown(function() {
 		document.getElementById("login_image").src = "images/login_down.png";
@@ -657,20 +693,24 @@ $(document).ready(function(){
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login_active.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 1;
 			search_active = 0;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 	});
 	//search_image
@@ -679,6 +719,7 @@ $(document).ready(function(){
 		$("#subpage_search").fadeToggle("slow");
 		$("#subpage_result").hide();
 		$("#subpage_share").hide();
+		$("#subpage_follow").hide();
 	});
 	$("#search_image").mousedown(function() {
 		document.getElementById("search_image").src = "images/search_down.png";
@@ -689,20 +730,24 @@ $(document).ready(function(){
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search_active.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 1;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 	});
 	//result_image
@@ -711,6 +756,7 @@ $(document).ready(function(){
 		$("#subpage_search").hide();
 		$("#subpage_result").fadeToggle("slow");
 		$("#subpage_share").hide();
+		$("#subpage_follow").hide();
 	});
 	$("#result_image").mousedown(function() {
 		document.getElementById("result_image").src = "images/result_down.png";
@@ -721,20 +767,24 @@ $(document).ready(function(){
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result_active.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 1;
 			share_active = 0;
+			follow_active = 0;
 		}
 	});
 	//share_image
@@ -743,6 +793,7 @@ $(document).ready(function(){
 		$("#subpage_search").hide();
 		$("#subpage_result").hide();
 		$("#subpage_share").fadeToggle("slow");
+		$("#subpage_follow").hide();
 	});
 	$("#share_image").mousedown(function() {
 		document.getElementById("share_image").src = "images/share_down.png";
@@ -753,23 +804,66 @@ $(document).ready(function(){
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
 			share_active = 0;
+			follow_active = 0;
 		}
 		else {
 			//document.getElementById("login_image").src = "images/login.png";
 			document.getElementById("search_image").src = "images/search.png";
 			document.getElementById("result_image").src = "images/result.png";
 			document.getElementById("share_image").src = "images/share_active.png";
+			document.getElementById("follow_image").src = "images/follow.png";
 			document.getElementById("share_user_textField").value = name;
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
 			share_active = 1;
+			follow_active = 0;
 		}
 	});
+	//follow_image
+	$("#follow_image").click(function() {
+		$("#subpage_login").hide();
+		$("#subpage_search").hide();
+		$("#subpage_result").hide();
+		$("#subpage_share").hide();
+		$("#subpage_follow").fadeToggle("slow");
+	});
+	$("#follow_image").mousedown(function() {
+		document.getElementById("follow_image").src = "images/follow_down.png";
+	});
+	$("#follow_image").mouseup(function() {
+		if (follow_active) {
+			//document.getElementById("login_image").src = "images/login.png";
+			document.getElementById("search_image").src = "images/search.png";
+			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow.png";
+			login_active = 0;
+			search_active = 0;
+			result_active = 0;
+			share_active = 0;
+			follow_active = 0;
+		}
+		else {
+			//document.getElementById("login_image").src = "images/login.png";
+			document.getElementById("search_image").src = "images/search.png";
+			document.getElementById("result_image").src = "images/result.png";
+			document.getElementById("share_image").src = "images/share.png";
+			document.getElementById("follow_image").src = "images/follow_active.png";
+			document.getElementById("share_user_textField").value = name;
+			login_active = 0;
+			search_active = 0;
+			result_active = 0;
+			share_active = 0;
+			follow_active = 1;
+		}
+	});
+	
 	
 	//Image click
 	$("#share_refresh_image").click(function() {
@@ -791,6 +885,34 @@ $(document).ready(function(){
 	});
 	$("#share_refresh_image").mouseup(function() {
 		document.getElementById("share_refresh_image").src = "images/refresh.png";
+	});
+	$("#user_search_image").click(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		
+		var user_search_text = document.getElementById("follow_search_textField").value;
+		if ((user_search_text == null) || (user_search_text == "")) {
+			alert("Error: Please input the name to search!");
+		}
+		else {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET","searchuserservlet?id=" + uid + "&search=" + user_search_text, false);
+			xmlhttp.send();
+			var usersSearchJson = JSON.parse(xmlhttp.responseText);
+			var follow_select = document.getElementById("follow_select");
+			follow_select.options.length=0;
+			for (var i = 0; i < usersSearchJson.length; i++) {
+				follow_select.options.add(new Option(usersSearchJson[i], i + "")); 
+			}
+		}
+	});
+	$("#user_search_image").mousedown(function() {
+		document.getElementById("user_search_image").src = "images/user_search_down.png";
+	});
+	$("#user_search_image").mouseup(function() {
+		document.getElementById("user_search_image").src = "images/user_search.png";
 	});
 	
 	//Button click

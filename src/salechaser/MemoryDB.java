@@ -59,6 +59,10 @@ public class MemoryDB {
 				+ "item VARCHAR(64), price VARCHAR(32), address VARCHAR(1024), comment VARCHAR(1024), " 
 				+ "picture VARCHAR(256), date VARCHAR(32), latitude double, longitude double)");
 		}
+		else if (tableName.equalsIgnoreCase("follow")) {
+			Execute("DROP TABLE IF EXISTS follow;");
+			Execute("CREATE TABLE follow (followerID VARCHAR(32), followeeID VARCHAR(32), followeeName VARCHAR(32))");
+		}
 	}
 	
 	public ResultSet ExecuteQuery(String Query) {

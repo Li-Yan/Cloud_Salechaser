@@ -64,6 +64,15 @@
     <url-pattern>/shareservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>SearchUserServlet</servlet-name>
+    <servlet-class>salechaser.SearchUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchUserServlet</servlet-name>
+    <url-pattern>/searchuserservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
