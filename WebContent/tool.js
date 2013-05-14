@@ -34,9 +34,14 @@ function valid_sharePrice(Price) {
 	else if (s.charAt(0) != '$') {
 		return false;
 	}
+	var dot_count = 0;
 	for (var i = 1; i < length; i++) {
 		var ch = s.charAt(i);
-		if ((ch < '0') || (ch >'9')) {
+		if (ch == '.') {
+			dot_count++;
+			if (dot_count > 1) return false;
+		}
+		else if ((ch < '0') || (ch >'9')) {
 			return false;
 		}
 	}

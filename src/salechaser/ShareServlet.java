@@ -122,7 +122,7 @@ public class ShareServlet extends HttpServlet {
 		}
 		
 		facebookID = shareStrings[0];
-		shareID = facebookID + "_" + Calendar.getInstance().getTimeInMillis();
+		shareID = String.valueOf(Calendar.getInstance().getTimeInMillis());
 		latitudeString = shareStrings[1];
 		longitudeString = shareStrings[2];
 		
@@ -137,7 +137,7 @@ public class ShareServlet extends HttpServlet {
 			if (!bucketExist) {
 				s3.createBucket(BUCKET_NAME);
 			}
-			PutObjectRequest putRequest = new PutObjectRequest(BUCKET_NAME, shareID + ".jpg", file);
+			PutObjectRequest putRequest = new PutObjectRequest(BUCKET_NAME, shareID + "_" + facebookID + ".jpg", file);
 			putRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 			s3.putObject(putRequest);
 			outStream.close();
@@ -153,7 +153,7 @@ public class ShareServlet extends HttpServlet {
 		query += "'" + addressString.replaceAll("\\'", "\\\\'") + "', ";
 		query += "'" + commentString.replaceAll("\\'", "\\\\'") + "', ";
 		if (file != null) {
-			query += "'" + S3_URL + BUCKET_NAME + "/" + shareID + ".jpg', ";
+			query += "'" + S3_URL + BUCKET_NAME + "/" + shareID + "_" + facebookID + ".jpg', ";
 		}
 		else {
 			query += "'" + S3_URL + BUCKET_NAME + "/" + "default.jpg', ";
@@ -163,6 +163,6 @@ public class ShareServlet extends HttpServlet {
 		query += longitudeString + ")";
 		db.Execute(query);
 		
-		response.sendRedirect("index.jsp?share=" + returnString);
+		response.sendRedirect("index.jsp?share_result=" + returnString);
 	}
 }

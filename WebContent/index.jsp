@@ -19,8 +19,8 @@ storeJSON is a JSON Array, use storeJSON.length to get its length
 each storeJSON[i] has the following attributes:
 	name;address;phone;showImage;expirationDate;dealTitle;URL;latitude;longitude
 -->
-<% if (request.getParameter("share") != null) {
-	String shareString = request.getParameter("share");
+<% if (request.getParameter("share_result") != null) {
+	String shareString = request.getParameter("share_result");
 %>
 	<script type="text/javascript">
 		alert("<%=shareString %>");
@@ -431,10 +431,11 @@ var addressJson;
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
 <input id="keyword_textField" name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
-<input id="search_parameter" name="search_parameter" type="hidden" />
+<input id="search_parameter" name="search_parameter" type="hidden" /> 
 
 <button id="search_button" class="normal_button" >Search</button><br />
 </form>
+
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
@@ -505,6 +506,15 @@ if (request.getParameter("search") != null) {
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Share</label> <br />
 
+<!-- Share with tweet -->
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+<div id="tweet-div">
+<a id="tweet_button" href="https://twitter.com/share" class="twitter-share-button" data-text="salechaser" data-lang="en" data-count="none" >Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<br />
+</div>
+<img src="images/transparent.png" width="5" height="10" alt="transperant" /><br />
+
 <form id="share_form" enctype="multipart/form-data">
 
 <img src="images/user.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
@@ -516,26 +526,26 @@ if (request.getParameter("search") != null) {
 <img src="images/item.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Item:</font>
 <img src="images/transparent.png" width="40" height="10" alt="transperant" />
-<input id="share_item_textField" name="share_item_textField" class="input_font" type="text" size="33" value="" onclick="this.select();"/><br />
+<input id="share_item_textField" name="share_item_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/price.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Price:</font>
 <img src="images/transparent.png" width="36" height="10" alt="transperant" />
-<input id="share_price_textField" name="share_price_textField" class="input_font" type="text" size="33" value="" onclick="this.select();"/><br />
+<input id="share_price_textField" name="share_price_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/location.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Address:</font>
 <img src="images/transparent.png" width="20" height="10" alt="transperant" />
-<input id="share_address_textField" name="share_address_textField" class="input_font" type="text" size="29" value="" onclick="this.select();"/>&nbsp;&nbsp;
+<input id="share_address_textField" name="share_address_textField" class="input_font" type="text" size="29" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
 <img id="share_refresh_image" src="images/refresh.png" width="15" height="15" alt="user" /><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/comment.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Comment:</font>
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
-<textarea id="share_comment_textArea" name="share_comment_textArea" class="input_font" rows="4" cols="31" style="vertical-align:top" ></textarea><br />
+<textarea id="share_comment_textArea" name="share_comment_textArea" class="input_font" rows="4" cols="31" style="vertical-align:top" onchange="change_tweet();"></textarea><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/picture.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
@@ -545,6 +555,45 @@ if (request.getParameter("search") != null) {
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
 <input id="share_parameter" name="share_parameter" type="hidden" />
+
+
+
+<script type="text/javascript">
+function change_tweet() {
+	var tweet_string = "I want to share:\n";
+	var tweet_temp_string = document.getElementById("share_item_textField").value;
+	if (tweet_temp_string != "") {
+		tweet_string = tweet_string + " - Item: " + tweet_temp_string + "\n";
+	}
+	tweet_temp_string = document.getElementById("share_price_textField").value;
+	if (tweet_temp_string != "") {
+		tweet_string = tweet_string + " - Price: " + tweet_temp_string + "\n";
+	}
+	tweet_temp_string = document.getElementById("share_address_textField").value;
+	if (tweet_temp_string != "") {
+		tweet_string = tweet_string + " - Address: " + tweet_temp_string + "\n";
+	}
+	tweet_temp_string = document.getElementById("share_comment_textArea").value;
+	if (tweet_temp_string != "") {
+		tweet_string = tweet_string + " - Comment: " + tweet_temp_string + "\n";
+	}
+	
+	//Renew the twitter button
+	$(".twitter-share-button").remove();
+	var tweet = $('<a>')
+	.attr('href', "https://twitter.com/share")
+	.attr('id', "tweet_button")
+	.attr('class', "twitter-share-button")
+	.attr('data-lang', "en")
+	.attr('data-count', "none")
+	.text('Share as Tweet');
+	 
+	$("#tweet-div").prepend(tweet);
+	tweet.attr('data-text', tweet_string);
+	tweet.attr('data-url', document.URL);
+	twttr.widgets.load();
+}
+</script>
 
 <button id="share_button" class="normal_button" >Share</button><br />
 </form>
