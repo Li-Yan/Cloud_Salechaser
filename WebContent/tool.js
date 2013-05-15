@@ -65,3 +65,21 @@ function marker_htmlMaker(store) {
 	htmlString = htmlString + "</div>";
 	return htmlString;
 }
+
+function sharemarker_htmlMaker(share) {
+	var htmlString = "";
+	htmlString = htmlString + "<div align='left' class='info'>";
+	htmlString = htmlString + "<img src='" + share.picture + "' height='64' /><br />";
+	htmlString = htmlString + "<a class='normal_font'>Item</a><br />";
+	htmlString = htmlString + "<a class='result_title_font'>" + unescape(share.item) + "</a><br />";
+	htmlString = htmlString + "<a class='normal_font'>Price</a><br />";
+	htmlString = htmlString + "<a class='result_title_font'>" + unescape(share.price) + "</a><br />";
+	htmlString = htmlString + "<a class='normal_font'>Address</a><br />";
+	htmlString = htmlString + "<a class='result_title_font'>" + unescape(share.address) + "</a><br />";
+	htmlString = htmlString + "<a class='normal_font'>Commet</a><br />";
+	htmlString = htmlString + "<a class='result_title_font'>" + unescape(share.comment) + "</a><br />";
+	htmlString = htmlString + "<a class='normal_font'>Date</a><br />";
+	htmlString = htmlString + "<a class='result_title_font'>" + unescape(share.date) + "</a><br />";
+	htmlString = htmlString + "</div>";
+	return htmlString;
+}

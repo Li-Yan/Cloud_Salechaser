@@ -14,6 +14,8 @@
 <script type="text/javascript" src="./plugin/json2.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
+<script type="text/javascript">var userJson;</script>
+	
 <!-- 
 storeJSON is a JSON Array, use storeJSON.length to get its length
 each storeJSON[i] has the following attributes:
@@ -52,6 +54,7 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var location_default = new google.maps.LatLng(40.75818,-73.957043);
 	var map;
 	var markers = [];
+	var sharemarkers = [];
 	var user_marker = null;
 	var user_location;
 	var user_marker_locker = false;
@@ -177,7 +180,58 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			infowindow.open(map, this);
 		});
 	}
+	
+	function addShareMarker(share) {
+		//Preparation
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","checkuserservlet?id=" + share.userID, false);
+		xmlhttp.send();
+		userJson = JSON.parse(xmlhttp.responseText);
+		var share_user_picture = userJson.picture.data.url;
+	  			
+		//draw marker
+		var location = new google.maps.LatLng(share.latitude, share.longitude);
+		marker = new google.maps.Marker({
+			position : location,
+			map : map,
+			icon : share_user_picture,
+			html : sharemarker_htmlMaker(share),
+			draggable : false,
+			animation : google.maps.Animation.DROP
+		});
+		sharemarkers.push(marker);
+		
+		//set animation
+		google.maps.event.addListener(marker, 'click', function() {
+			for (var i = 0; i < sharemarkers.length; i++) {
+				sharemarkers[i].setAnimation(null);
+			}
+			this.setAnimation(google.maps.Animation.BOUNCE);
+		});
+		google.maps.event.addListener(marker, 'dblclick', function() {
+			this.setAnimation(null);
+		});
+		
+		//infowindow
+		google.maps.event.addListener(marker, 'click', function() {
+			var index = 0;
+			for (index = 0; index < sharemarkers.length; index++) {
+				if (sharemarkers[index] == this)
+					break;
+			}
+			infowindow.setContent(this.html);
+			infowindow.open(map, this);
+		});
+	}
 
+	function erase_all_share_marker() {
+		var index = 0;
+		for (index = 0; index < sharemarkers.length; index++) {
+			sharemarkers[index].setMap(null);
+		}
+		sharemarker = [];
+	}
+	
 	google.maps.event.addDomListener(window, 'load', map_initialize);
 </script>
 <!-- End: Google Maps API v3 -->
@@ -276,7 +330,6 @@ body {
 	var uid = "";
 	var accessToken = "";
 	var name = "";
-	var userJson;
 	window.fbAsyncInit = function() {
 		// init the FB JS SDK
 	    FB.init({
@@ -350,14 +403,16 @@ body {
 <!-- <img id="login_image" src="images/login.png" width="30" height="30" alt="login icon" /> -->
 <!-- <img src="images/transparent.png" width="15" height="10" alt="transparent" /> -->
 <img id="search_image" src="images/search.png" width="30" height="30" alt="search icon" />
-<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img src="images/transparent.png" width="7" height="10" alt="transparent" />
 <img id="result_image" src="images/result.png" width="30" height="30" alt="result icon" />
-<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img src="images/transparent.png" width="7" height="10" alt="transparent" />
 <img id="share_image" src="images/share.png" width="30" height="30" alt="share icon" />
-<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img src="images/transparent.png" width="7" height="10" alt="transparent" />
 <img id="watch_image" src="images/watch.png" width="30" height="30" alt="share icon" />
-<img src="images/transparent.png" width="15" height="10" alt="transparent" />
+<img src="images/transparent.png" width="7" height="10" alt="transparent" />
 <img id="follow_image" src="images/follow.png" width="30" height="30" alt="share icon" />
+<img src="images/transparent.png" width="7" height="10" alt="transparent" />
+<img id="erase_image" src="images/erase.png" width="30" height="30" alt="share icon" />
 </div>
 <!-- End: Buttons for multiple jobs -->
 <br />
@@ -370,6 +425,7 @@ var share_active = 0;
 var watch_active = 0;
 var follow_active = 0;
 var addressJson;
+var shareJson;
 </script>
 <!-- subpage for login -->
 <div id="subpage_login" align="center" class="non_display_subpage">
@@ -630,7 +686,10 @@ function change_tweet() {
 
 <font class="normal_font">Share List</font><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
-<select id="share_select" name="share_select" size="7" multiple="multiple" class="input_font" style="width:570px"></select><br />
+<select id="share_select" name="share_select" size="11" multiple="multiple" class="input_font" style="width:570px"></select><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<button id="share_show_button" class="normal_button" >Show in Map</button><br />
 
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -696,8 +755,16 @@ $("#share_image").wTooltip({
 	title: "Share",
 	theme: "black"
 });
+$("#watch_image").wTooltip({
+	title: "Watch",
+	theme: "black"
+});
 $("#follow_image").wTooltip({
 	title: "Follow",
+	theme: "black"
+});
+$("#erase_image").wTooltip({
+	title: "Erase share on map",
 	theme: "black"
 });
 $("#share_refresh_image").wTooltip({
@@ -706,6 +773,10 @@ $("#share_refresh_image").wTooltip({
 });
 $("#user_search_image").wTooltip({
 	title: "Search user",
+	theme: "yellow"
+});
+$("#share_show_button").wTooltip({
+	title: "Show in Map",
 	theme: "yellow"
 });
 $("#follow_list_button").wTooltip({
@@ -992,6 +1063,16 @@ $(document).ready(function(){
 			follow_active = 1;
 		}
 	});
+	//erase_image
+	$("#erase_image").click(function() {
+		erase_all_share_marker();
+	});
+	$("#erase_image").mousedown(function() {
+		document.getElementById("erase_image").src = "images/erase_down.png";
+	});
+	$("#erase_image").mouseup(function() {
+		document.getElementById("erase_image").src = "images/erase.png";
+	});
 	
 	
 	//Image click
@@ -1156,6 +1237,20 @@ $(document).ready(function(){
 		form.method = "post";
 		form.submit();
 	});
+	$("#share_show_button").click(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		
+		var share_select = document.getElementById("share_select");
+		if (share_select.options[share_select.selectedIndex] == null) {
+			alert("Error: Please select a share!");
+			return;
+		}
+		var share_select_index = share_select.selectedIndex;
+		addShareMarker(shareJson[share_select_index]);
+	});
 	$("#follow_list_button").click(function() {
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("GET","searchfollowservlet?id=" + uid + "&add_follow_string=true", false);
@@ -1234,7 +1329,7 @@ $(document).ready(function(){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open("GET","searchshareservlet?id=" + watch_user_option.value, false);
 		xmlhttp.send();
-		var shareJson = JSON.parse(xmlhttp.responseText);
+		shareJson = JSON.parse(xmlhttp.responseText);
 		var share_select = document.getElementById("share_select");
 		share_select.options.length=0;
 		for (var i = 0; i < shareJson.length; i++) {
