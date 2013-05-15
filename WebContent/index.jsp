@@ -343,7 +343,7 @@ body {
 
 <img src="images/logo.png" alt="logo" width="278" height="100" class="logo" /> 
 <div align="right">
-<div class="fb-login-button" data-show-faces="true" data-width="10" data-max-rows="5" size="medium"></div>
+<div class="fb-login-button" data-show-faces="true" data-width="250" data-max-rows="5" size="medium"></div>
 </div>
 <!-- Buttons for multiple jobs -->
 <div class="page_button">
