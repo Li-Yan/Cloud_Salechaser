@@ -65,6 +65,18 @@ public class MemoryDB {
 		}
 	}
 	
+	public boolean DataExist(String Query) {
+		ResultSet result = ExecuteQuery(Query);
+		boolean exist = false;
+		try {
+			exist = result.next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return exist;
+	}
+	
 	public ResultSet ExecuteQuery(String Query) {
 		ResultSet result = null;
 		try {

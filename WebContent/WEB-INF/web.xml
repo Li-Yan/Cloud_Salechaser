@@ -73,6 +73,24 @@
     <url-pattern>/searchuserservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>SearchFollowServlet</servlet-name>
+    <servlet-class>salechaser.SearchFollowServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchFollowServlet</servlet-name>
+    <url-pattern>/searchfollowservlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>FollowServlet</servlet-name>
+    <servlet-class>salechaser.FollowServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FollowServlet</servlet-name>
+    <url-pattern>/followservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

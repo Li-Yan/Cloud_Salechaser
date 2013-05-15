@@ -612,7 +612,7 @@ function change_tweet() {
 
 <font class="normal_font">Search User:</font>
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
-<input id="follow_search_textField" name="follow_search_textField" class="input_font" type="text" size="29" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
+<input id="follow_search_textField" name="follow_search_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
 <img id="user_search_image" src="images/user_search.png" width="15" height="15" alt="user" /><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
@@ -623,8 +623,14 @@ function change_tweet() {
 </select><br />
 <img src="images/transparent.png" width="19" height="10" alt="transperant" /><br />
 
-<button id="follow_list_button" class="normal_button" >List My Follows</button><br />
-<img src="images/transparent.png" width="5" height="10" alt="transperant" />
+<button id="follow_list_button" class="normal_button" style="width:80px">List</button>
+<img src="images/transparent.png" width="10" height="10" alt="transperant" />
+
+<button id="follow_button" class="normal_button" style="width:80px">Follow</button>
+<img src="images/transparent.png" width="10" height="10" alt="transperant" />
+
+<button id="unfollow_button" class="normal_button" style="width:80px">Unfollow</button><br />
+<img src="images/transparent.png" width="5" height="10" alt="transperant" /><br />
 
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -667,7 +673,19 @@ $("#share_refresh_image").wTooltip({
 	theme: "yellow"
 });
 $("#user_search_image").wTooltip({
-	title: "Search User",
+	title: "Search user",
+	theme: "yellow"
+});
+$("#follow_list_button").wTooltip({
+	title: "List my follows",
+	theme: "yellow"
+});
+$("#follow_button").wTooltip({
+	title: "Follow this user",
+	theme: "yellow"
+});
+$("#unfollow_button").wTooltip({
+	title: "Unfollow this user",
 	theme: "yellow"
 });
 </script>
@@ -904,7 +922,7 @@ $(document).ready(function(){
 			var follow_select = document.getElementById("follow_select");
 			follow_select.options.length=0;
 			for (var i = 0; i < usersSearchJson.length; i++) {
-				follow_select.options.add(new Option(usersSearchJson[i], i + "")); 
+				follow_select.options.add(new Option(usersSearchJson[i].name, usersSearchJson[i].id)); 
 			}
 		}
 	});
@@ -1026,6 +1044,65 @@ $(document).ready(function(){
 		form.action = "shareservlet";
 		form.method = "post";
 		form.submit();
+	});
+	$("#follow_list_button").click(function() {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","searchfollowservlet?id=" + uid + "&add_follow_string=true", false);
+		xmlhttp.send();
+		var followSearchJson = JSON.parse(xmlhttp.responseText);
+		var follow_select = document.getElementById("follow_select");
+		follow_select.options.length=0;
+		for (var i = 0; i < followSearchJson.length; i++) {
+			follow_select.options.add(new Option(followSearchJson[i].name, followSearchJson[i].id)); 
+		}
+	});
+	$("#follow_button").click(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		
+		var follow_select = document.getElementById("follow_select");
+		if (follow_select.options[follow_select.selectedIndex] == null) {
+			alert("Error: Please select a user!");
+			return;
+		}
+		var follow_option = follow_select.options[follow_select.selectedIndex];
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("POST","followservlet?follow=true&followerID=" + uid + "&followeeID=" 
+				+ follow_option.value + "&followeeName=" + follow_option.text, false);
+		xmlhttp.send();
+		if (xmlhttp.responseText == "OK") {
+			alert("Follow succeeds!");
+			follow_select.options.length=0;
+		}
+		else {
+			alert(xmlhttp.responseText);
+		}
+	});
+	$("#unfollow_button").click(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		
+		var follow_select = document.getElementById("follow_select");
+		if (follow_select.options[follow_select.selectedIndex] == null) {
+			alert("Error: Please select a user!");
+			return;
+		}
+		var follow_option = follow_select.options[follow_select.selectedIndex];
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("POST","followservlet?follow=false&followerID=" + uid + "&followeeID=" 
+				+ follow_option.value + "&followeeName=" + follow_option.text, false);
+		xmlhttp.send();
+		if (xmlhttp.responseText == "OK") {
+			alert("Unfollow succeeds!");
+			follow_select.options.length=0;
+		}
+		else {
+			alert(xmlhttp.responseText);
+		}
 	});
 });
 </script>

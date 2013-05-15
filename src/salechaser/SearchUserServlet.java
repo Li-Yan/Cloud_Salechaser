@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class SearchUserServlet extends HttpServlet {
 
@@ -32,8 +33,14 @@ public class SearchUserServlet extends HttpServlet {
 		ResultSet result = db.ExecuteQuery(query);
 		try {
 			while (result.next()) {
-				idList.add(result.getString("id"));
-				nameList.add(result.getString("name"));
+				String s = result.getString("id");
+				if (s.equals(facebookID)) {
+					nameList.add(result.getString("name") + " (myself)");
+				}
+				else {
+					nameList.add(result.getString("name"));
+				}
+				idList.add(s);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -62,8 +69,11 @@ public class SearchUserServlet extends HttpServlet {
 		}
 		
 		JSONArray jsonArray = new JSONArray();
-		for (String name : nameList) {
-			jsonArray.put(name);
+		for (int i = 0; i < idList.size(); i++) {
+			JSONObject object = new JSONObject();
+			object.put("id", idList.get(i));
+			object.put("name", nameList.get(i));
+			jsonArray.put(object);
 		}
 		
 		PrintWriter out=response.getWriter();

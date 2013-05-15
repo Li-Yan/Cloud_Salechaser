@@ -100,7 +100,7 @@ public class ShareServlet extends HttpServlet {
 							while ((len = inputStream.read(buffer)) > 0) {
 								outStream.write(buffer, 0, len);
 							}
-							returnString = "Share Succeed!";
+							returnString = "Share Succeeds!";
 						}
 						else {
 							if ((fileName != null) && (!fileName.equalsIgnoreCase(""))) {
@@ -109,7 +109,7 @@ public class ShareServlet extends HttpServlet {
 								return;
 							}
 							else {
-								returnString = "Share Succeed!";
+								returnString = "Share Succeeds!";
 							}
 						}
 					}
