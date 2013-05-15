@@ -55,8 +55,8 @@ public class MemoryDB {
 		}
 		else if (tableName.equalsIgnoreCase("share")) {
 			Execute("DROP TABLE IF EXISTS share;");
-			Execute("CREATE TABLE share (userID VARCHAR(32), shareID VARCHAR(32), " 
-				+ "item VARCHAR(64), price VARCHAR(32), address VARCHAR(1024), comment VARCHAR(1024), " 
+			Execute("CREATE TABLE share (userID VARCHAR(32), userName VARCHAR(64), shareID VARCHAR(32), " 
+				+ "item VARCHAR(1024), price VARCHAR(32), address VARCHAR(1024), comment VARCHAR(1024), " 
 				+ "picture VARCHAR(256), date VARCHAR(32), latitude double, longitude double)");
 		}
 		else if (tableName.equalsIgnoreCase("follow")) {

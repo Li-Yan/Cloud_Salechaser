@@ -542,19 +542,19 @@ if (request.getParameter("search") != null) {
 <img src="images/item.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Item:</font>
 <img src="images/transparent.png" width="40" height="10" alt="transperant" />
-<input id="share_item_textField" name="share_item_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/><br />
+<input id="share_item_textField" name="share_item_textField" class="input_font" type="text" size="33" value="" onchange="change_tweet();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/price.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Price:</font>
 <img src="images/transparent.png" width="36" height="10" alt="transperant" />
-<input id="share_price_textField" name="share_price_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/><br />
+<input id="share_price_textField" name="share_price_textField" class="input_font" type="text" size="33" value="" onchange="change_tweet();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/location.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">Address:</font>
 <img src="images/transparent.png" width="20" height="10" alt="transperant" />
-<input id="share_address_textField" name="share_address_textField" class="input_font" type="text" size="29" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
+<input id="share_address_textField" name="share_address_textField" class="input_font" type="text" size="29" value="" onchange="change_tweet();"/>&nbsp;&nbsp;
 <img id="share_refresh_image" src="images/refresh.png" width="15" height="15" alt="user" /><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
@@ -622,6 +622,15 @@ function change_tweet() {
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Watch</label> <br />
 
+<img src="images/users.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
+<font class="normal_font">Followed Users:</font>
+<img src="images/transparent.png" width="5" height="10" alt="transperant" />
+<select id="watch_user_select" name="watch_user_select" class="input_font" style="width:270px"></select><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<font class="normal_font">Share List</font><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+<select id="share_select" name="share_select" size="7" multiple="multiple" class="input_font" style="width:570px"></select><br />
 
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -636,15 +645,14 @@ function change_tweet() {
 
 <font class="normal_font">Search User:</font>
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
-<input id="follow_search_textField" name="follow_search_textField" class="input_font" type="text" size="33" value="" onclick="this.select();" onchange="change_tweet();"/>&nbsp;&nbsp;
+<input id="follow_search_textField" name="follow_search_textField" class="input_font" type="text" size="33" value="" onclick="this.select();"/>&nbsp;&nbsp;
 <img id="user_search_image" src="images/user_search.png" width="15" height="15" alt="user" /><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
 <font class="normal_font">Follow List</font><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
-<select id="follow_select" name="follow_select" size="7" multiple="multiple" class="input_font" style="width:370px">
-</select><br />
+<select id="follow_select" name="follow_select" size="7" multiple="multiple" class="input_font" style="width:370px"></select><br />
 <img src="images/transparent.png" width="19" height="10" alt="transperant" /><br />
 
 <button id="follow_list_button" class="normal_button" style="width:80px">List</button>
@@ -921,6 +929,18 @@ $(document).ready(function(){
 			document.getElementById("share_image").src = "images/share.png";
 			document.getElementById("watch_image").src = "images/watch_active.png";
 			document.getElementById("follow_image").src = "images/follow.png";
+			//Update the select for followed user whenever this subpage is checked
+			var watch_user_select = document.getElementById("watch_user_select");
+			watch_user_select.options.length=0;
+			watch_user_select.options.add(new Option("- Please select a user -", "0"));
+			watch_user_select.options.add(new Option(name + " (self)", uid));
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET","searchfollowservlet?id=" + uid + "&add_follow_string=false", false);
+			xmlhttp.send();
+			var watch_followJson = JSON.parse(xmlhttp.responseText);
+			for (var i = 0; i < watch_followJson.length; i++) {
+				watch_user_select.options.add(new Option(watch_followJson[i].name, watch_followJson[i].id)); 
+			}
 			login_active = 0;
 			search_active = 0;
 			result_active = 0;
@@ -1013,7 +1033,7 @@ $(document).ready(function(){
 			var follow_select = document.getElementById("follow_select");
 			follow_select.options.length=0;
 			for (var i = 0; i < usersSearchJson.length; i++) {
-				follow_select.options.add(new Option(usersSearchJson[i].name, usersSearchJson[i].id)); 
+				follow_select.options.add(new Option(usersSearchJson[i].name, usersSearchJson[i].id));
 			}
 		}
 	});
@@ -1100,7 +1120,6 @@ $(document).ready(function(){
 			alert("Error: Please login with your facebook account first!");
 			return;
 		}
-		
 		var item = document.getElementById("share_item_textField").value;
 		var price = document.getElementById("share_price_textField").value;
 		var address = document.getElementById("share_address_textField").value;
@@ -1128,7 +1147,8 @@ $(document).ready(function(){
 		xmlhttp.send();
 		addressJson = JSON.parse(xmlhttp.responseText);
 		document.getElementById("share_address_textField").value = addressJson.formatted_address;
-		document.getElementById("share_parameter").value = uid + "," + addressJson.latitude + "," + addressJson.longitude;
+		document.getElementById("share_parameter").value = uid + "," + name + "," + addressJson.latitude 
+			+ "," + addressJson.longitude;
 		
 		//Form submit
  		form = document.getElementById("share_form");
@@ -1193,6 +1213,34 @@ $(document).ready(function(){
 		}
 		else {
 			alert(xmlhttp.responseText);
+		}
+	});
+	
+	//Select Change
+	$("#watch_user_select").change(function() {
+		if (uid == "") {
+			alert("Error: Please login with your facebook account first!");
+			return;
+		}
+		var watch_user_select = document.getElementById("watch_user_select");
+		if (watch_user_select.options[watch_user_select.selectedIndex] == null) {
+			alert("Error: Please select a user!");
+			return;
+		}
+		var watch_user_option = watch_user_select.options[watch_user_select.selectedIndex];
+		if (watch_user_option.text == "- Please select a user -") {
+			return;
+		}
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","searchshareservlet?id=" + watch_user_option.value, false);
+		xmlhttp.send();
+		var shareJson = JSON.parse(xmlhttp.responseText);
+		var share_select = document.getElementById("share_select");
+		share_select.options.length=0;
+		for (var i = 0; i < shareJson.length; i++) {
+			var share_string = shareJson[i].date + " " + shareJson[i].userName + ": " + 
+				shareJson[i].price + " " + shareJson[i].item;
+			share_select.options.add(new Option(share_string, shareJson[i].userID)); 
 		}
 	});
 });

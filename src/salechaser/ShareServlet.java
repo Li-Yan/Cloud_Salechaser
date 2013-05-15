@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class ShareServlet extends HttpServlet {
 		boolean bucketExist = false;
 		
 		String facebookID = null;
+		String facebookName = null;
 		String shareID = null;
 		String itemString = null;
 		String priceString = null;
@@ -123,8 +125,9 @@ public class ShareServlet extends HttpServlet {
 		
 		facebookID = shareStrings[0];
 		shareID = String.valueOf(Calendar.getInstance().getTimeInMillis());
-		latitudeString = shareStrings[1];
-		longitudeString = shareStrings[2];
+		facebookName = shareStrings[1];
+		latitudeString = shareStrings[2];
+		longitudeString = shareStrings[3];
 		
 		if (file != null) {
 			s3 = new AmazonS3Client(credentials);
@@ -144,9 +147,11 @@ public class ShareServlet extends HttpServlet {
 			s3.shutdown();
 		}
 		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy-HH:mm");
 		MemoryDB db = new MemoryDB();
 		String query = "INSERT INTO share VALUES (";
 		query += "'" + facebookID + "', ";
+		query += "'" + facebookName + "', ";
 		query += "'" + shareID + "', ";
 		query += "'" + itemString.replaceAll("\\'", "\\\\'") + "', ";
 		query += "'" + priceString.replaceAll("\\'", "\\\\'") + "', ";
@@ -158,7 +163,7 @@ public class ShareServlet extends HttpServlet {
 		else {
 			query += "'" + S3_URL + BUCKET_NAME + "/" + "default.jpg', ";
 		}
-		query += "'" + Calendar.getInstance().getTime() + "', ";
+		query += "'" + simpleDateFormat.format(Calendar.getInstance().getTime()) + "', ";
 		query += latitudeString + ", ";
 		query += longitudeString + ")";
 		db.Execute(query);

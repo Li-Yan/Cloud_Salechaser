@@ -35,7 +35,7 @@ public class SearchUserServlet extends HttpServlet {
 			while (result.next()) {
 				String s = result.getString("id");
 				if (s.equals(facebookID)) {
-					nameList.add(result.getString("name") + " (myself)");
+					nameList.add(result.getString("name") + " (self)");
 				}
 				else {
 					nameList.add(result.getString("name"));
@@ -76,7 +76,7 @@ public class SearchUserServlet extends HttpServlet {
 			jsonArray.put(object);
 		}
 		
-		PrintWriter out=response.getWriter();
+		PrintWriter out = response.getWriter();
 		out.write(jsonArray.toString());
 		out.close();
 	}

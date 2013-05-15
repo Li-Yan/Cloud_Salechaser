@@ -91,6 +91,15 @@
     <url-pattern>/followservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>SearchShareServlet</servlet-name>
+    <servlet-class>salechaser.SearchShareServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchShareServlet</servlet-name>
+    <url-pattern>/searchshareservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
