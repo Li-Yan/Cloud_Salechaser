@@ -330,6 +330,7 @@ body {
 	var uid = "";
 	var accessToken = "";
 	var name = "";
+	var email = "";
 	window.fbAsyncInit = function() {
 		// init the FB JS SDK
 	    FB.init({
@@ -343,13 +344,16 @@ body {
 	  	    if (response.status === 'connected') {
 	  	        uid = response.authResponse.userID;
 	  	        accessToken = response.authResponse.accessToken;
-	  	      	var xmlhttp = new XMLHttpRequest();
-	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
-	  			xmlhttp.send();
-	  			userJson = JSON.parse(xmlhttp.responseText);
-	  			name = userJson.name;
+	  			FB.api('/me?access_token=' + accessToken + '', function (response) {
+                    email = response.email;
+                    var xmlhttp = new XMLHttpRequest();
+    	  			xmlhttp.open("GET","checkuserservlet?id=" + uid + "&email=" + email, false);
+    	  			xmlhttp.send();
+    	  			userJson = JSON.parse(xmlhttp.responseText);
+    	  			name = userJson.name;
+                });
 	  	    } else if (response.status === 'not_authorized') {
-	  	    	FB.login();
+	  	    	FB.login(function(response) {}, {scope: 'email'});
 	  	    } else {
 	  	    }
 	  	});
@@ -358,13 +362,16 @@ body {
 	        if (response.status === 'connected') {
 	        	uid = response.authResponse.userID;
 	  	        accessToken = response.authResponse.accessToken;
-	  	      	var xmlhttp = new XMLHttpRequest();
-	  			xmlhttp.open("GET","checkuserservlet?id=" + uid, false);
-	  			xmlhttp.send();
-	  			userJson = JSON.parse(xmlhttp.responseText);
-	  			name = userJson.name;
+	  			FB.api('/me?access_token=' + accessToken + '', function (response) {
+	  				email = response.email;
+	  				var xmlhttp = new XMLHttpRequest();
+    	  			xmlhttp.open("GET","checkuserservlet?id=" + uid + "&email=" + email, false);
+    	  			xmlhttp.send();
+    	  			userJson = JSON.parse(xmlhttp.responseText);
+    	  			name = userJson.name;
+                });
 	        } else if (response.status === 'not_authorized') {
-	  	    	FB.login();
+	        	FB.login(function(response) {}, {scope: 'email'});
 	  	    } else {
 	  	    }
 	    });
@@ -396,7 +403,7 @@ body {
 
 <img src="images/logo.png" alt="logo" width="278" height="100" class="logo" /> 
 <div align="right">
-<div class="fb-login-button" data-show-faces="true" data-width="250" data-max-rows="5" size="medium"></div>
+<div class="fb-login-button" perms="email" data-show-faces="true" data-width="250" data-max-rows="5" size="medium"></div>
 </div>
 <!-- Buttons for multiple jobs -->
 <div class="page_button">

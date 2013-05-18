@@ -51,7 +51,7 @@ public class MemoryDB {
 		}
 		else if (tableName.equalsIgnoreCase("users")) {
 			Execute("DROP TABLE IF EXISTS users;");
-			Execute("CREATE TABLE users (id VARCHAR(32) PRIMARY KEY, name VARCHAR(64), picture VARCHAR(1024))");
+			Execute("CREATE TABLE users (id VARCHAR(32) PRIMARY KEY, name VARCHAR(64), picture VARCHAR(1024), mail VARCHAR(64))");
 		}
 		else if (tableName.equalsIgnoreCase("share")) {
 			Execute("DROP TABLE IF EXISTS share;");
