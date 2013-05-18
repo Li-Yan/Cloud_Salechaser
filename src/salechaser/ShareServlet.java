@@ -168,6 +168,16 @@ public class ShareServlet extends HttpServlet {
 		query += longitudeString + ")";
 		db.Execute(query);
 		
+		//Send email to all other followers
+		String messageContentString = facebookName + " shares a new item!!!\n";
+		messageContentString += "Item: " + itemString + "\n";
+		messageContentString += "Price: " + priceString + "\n";
+		messageContentString += "Address: " + addressString + "\n";
+		messageContentString += "Comment: " + commentString + "\n";
+		messageContentString += "Picture: " + S3_URL + BUCKET_NAME + "/" + shareID + "_" + facebookID + ".jpg\n";
+		messageContentString += "\n\nBy Salechaser";
+		SendEmail.SendToAllFollower(facebookID, messageContentString);
+		
 		response.sendRedirect("index.jsp?share_result=" + returnString);
 	}
 }
