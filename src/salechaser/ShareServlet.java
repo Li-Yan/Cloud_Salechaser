@@ -30,7 +30,7 @@ public class ShareServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -9088787724725266951L;
 	private static final String BUCKET_NAME = "salechaser";
-	private static final String S3_URL = "https://s3.amazonaws.com/";
+	private static final String CLOUDFRONT_URL = "http://d1ytnmsoxy5l7w.cloudfront.net/";
 	
 	static AmazonS3Client s3;
 	
@@ -158,10 +158,10 @@ public class ShareServlet extends HttpServlet {
 		query += "'" + addressString.replaceAll("\\'", "\\\\'") + "', ";
 		query += "'" + commentString.replaceAll("\\'", "\\\\'") + "', ";
 		if (file != null) {
-			query += "'" + S3_URL + BUCKET_NAME + "/" + shareID + "_" + facebookID + ".jpg', ";
+			query += "'" + CLOUDFRONT_URL + shareID + "_" + facebookID + ".jpg', ";
 		}
 		else {
-			query += "'" + S3_URL + BUCKET_NAME + "/" + "default.jpg', ";
+			query += "'" + CLOUDFRONT_URL + "default.jpg', ";
 		}
 		query += "'" + simpleDateFormat.format(Calendar.getInstance().getTime()) + "', ";
 		query += latitudeString + ", ";
@@ -174,7 +174,9 @@ public class ShareServlet extends HttpServlet {
 		messageContentString += "Price: " + priceString + "\n";
 		messageContentString += "Address: " + addressString + "\n";
 		messageContentString += "Comment: " + commentString + "\n";
-		messageContentString += "Picture: " + S3_URL + BUCKET_NAME + "/" + shareID + "_" + facebookID + ".jpg\n";
+		if (file != null) {
+			messageContentString += "Picture: " + CLOUDFRONT_URL + shareID + "_" + facebookID + ".jpg\n";
+		}
 		messageContentString += "\n\nBy Salechaser";
 		SendEmail.SendToAllFollower(facebookID, messageContentString);
 		
