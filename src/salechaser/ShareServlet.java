@@ -169,16 +169,26 @@ public class ShareServlet extends HttpServlet {
 		db.Execute(query);
 		
 		//Send email to all other followers
-		String messageContentString = facebookName + " shares a new item!!!\n";
-		messageContentString += "Item: " + itemString + "\n";
-		messageContentString += "Price: " + priceString + "\n";
-		messageContentString += "Address: " + addressString + "\n";
-		messageContentString += "Comment: " + commentString + "\n";
-		if (file != null) {
-			messageContentString += "Picture: " + CLOUDFRONT_URL + shareID + "_" + facebookID + ".jpg\n";
+		String messageContentString = "<body>";
+		messageContentString += "<b style='color: rgb(0, 86, 214); font-size: x-large; '>" + facebookName + " shares a new item!!!</b><br /><br />";
+		messageContentString += "<b style='font-size: 15px;'>Item:</b><br />";
+		messageContentString += itemString + "<br />";
+		messageContentString += "<b style='font-size: 15px;'>Price:</b><br />";
+		messageContentString += priceString + "<br />";
+		messageContentString += "<b style='font-size: 15px;'>Address:</b><br />";
+		messageContentString += addressString + "<br />";
+		if ((commentString != null) && (commentString.length() > 0)) {
+			messageContentString += "<b style='font-size: 15px;'>Comment:</b><br />";
+			messageContentString += commentString + "<br />";
 		}
-		messageContentString += "\n\nBy Salechaser";
-		SendEmail.SendToAllFollower(facebookID, messageContentString);
+		if (file != null) {
+			messageContentString += "<b style='font-size: 15px;'>Picture:</b><br />";
+			messageContentString += "<img src='" + CLOUDFRONT_URL + shareID + "_" + facebookID + ".jpg" + "' height='64' /><br />";
+		}
+		messageContentString += "<br /><br /><span style='font-size: 13px;'><font color='#e63b7a'>By Salechaser</font></span><br />";
+		messageContentString += "<img src='" + CLOUDFRONT_URL + "logo.png" + "' height='78' /><br />";
+		messageContentString += "http://salechaser-rpfyn2rz57.elasticbeanstalk.com";
+		SendEmailAWS.SendToAllFollower(facebookID, messageContentString, "html");
 		
 		response.sendRedirect("index.jsp?share_result=" + returnString);
 	}
